@@ -6,6 +6,7 @@ import javax.persistence.*;
 public class Transaction {
 
   /* Transaction no lleva registro de las promos.
+   * Tampoco modifica el monto de la transacción.
    * Esto funciona para una sola promo que depende de la
    * operación deposit.
    * De haber más promos, será necesario guardar qué promo
