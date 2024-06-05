@@ -11,19 +11,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class AccountIntegrationServiceTest {
 
-    @Autowired
-    AccountService accountService;
+  @Autowired AccountService accountService;
 
-    Account createAccount(Double balance) {
-        return accountService.createAccount(new Account(balance));
-    }
+  Account createAccount(Double balance) {
+    return accountService.createAccount(new Account(balance));
+  }
 
-    Account withdraw(Account account, Double sum) {
-        return accountService.withdraw(account.getCbu(), sum);
-    }
+  Account withdraw(Account account, Double sum) {
+    return accountService.withdraw(account.getCbu(), sum);
+  }
 
-    Account deposit(Account account, Double sum) {
-        return accountService.deposit(account.getCbu(), sum);
-    }
-
+  Account deposit(Account account, Double sum) {
+    return accountService.deposit(account.getCbu(), sum);
+  }
 }
