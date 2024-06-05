@@ -37,9 +37,6 @@ public class AccountService {
     accountRepository.deleteById(cbu);
   }
 
-  /* Supuestos: no se puede retirar un monto negativo.
-   * No se puede retirar o depositar a una cuenta no existente. */
-
   public Account withdraw(Long cbu, Double sum) {
     if (sum <= 0) {
       throw new NegativeSumException("Cannot withdraw negative sums");
@@ -78,8 +75,6 @@ public class AccountService {
 
     return account;
   }
-
-  /* Supuesto: se puede eliminar una transacción de una cuenta ya eliminada. */
 
   public void rollbackDeposit(Long cbu, Double sum) {
     Account account = accountRepository.findAccountByCbu(cbu);
