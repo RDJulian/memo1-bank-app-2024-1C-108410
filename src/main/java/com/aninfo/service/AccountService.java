@@ -15,6 +15,7 @@ import java.util.Optional;
 public class AccountService {
 
   @Autowired private AccountRepository accountRepository;
+  @Autowired private PromoService promoService;
 
   public Account createAccount(Account account) {
     return accountRepository.save(account);
@@ -71,9 +72,35 @@ public class AccountService {
       throw new AccountNotFoundException("Cannot deposit to non-existent account");
     }
 
+    sum = promoService.applyPromo(sum);
     account.setBalance(account.getBalance() + sum);
     accountRepository.save(account);
 
     return account;
+  }
+
+  /* Supuesto: se puede eliminar una transacción de una cuenta ya eliminada. */
+
+  public void rollbackDeposit(Long cbu, Double sum) {
+    Account account = accountRepository.findAccountByCbu(cbu);
+
+    if (account != null) {
+      if (account.getBalance() < sum) {
+        throw new InsufficientFundsException("Insufficient funds");
+      }
+
+      sum = promoService.applyPromo(sum);
+      account.setBalance(account.getBalance() - sum);
+      accountRepository.save(account);
+    }
+  }
+
+  public void rollbackWithdraw(Long cbu, Double sum) {
+    Account account = accountRepository.findAccountByCbu(cbu);
+
+    if (account != null) {
+      account.setBalance(account.getBalance() + sum);
+      accountRepository.save(account);
+    }
   }
 }

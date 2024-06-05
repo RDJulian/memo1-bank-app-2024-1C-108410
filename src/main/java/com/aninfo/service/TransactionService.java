@@ -1,6 +1,5 @@
 package com.aninfo.service;
 
-import com.aninfo.exceptions.AccountNotFoundException;
 import com.aninfo.exceptions.InsufficientFundsException;
 import com.aninfo.exceptions.InvalidTransactionTypeException;
 import com.aninfo.model.Transaction;
@@ -53,24 +52,23 @@ public class TransactionService {
   @Transactional
   public void deleteTransaction(Long id) {
     Optional<Transaction> transaction = transactionRepository.findById(id);
+
     if (transaction.isPresent()) {
       try {
         rollback(transaction.get());
       } catch (InsufficientFundsException ife) {
         throw new InsufficientFundsException("Cannot rollback transaction: insufficient funds");
-      } catch (AccountNotFoundException ignored) {
-        // Supuesto: se puede eliminar una transacción de una cuenta ya eliminada.
       }
+
       transactionRepository.delete(transaction.get());
     }
   }
 
   private void rollback(Transaction transaction) {
-    /* TODO: Considerar si es mejor implementar métodos independientes. */
     if (transaction.getType().equals(DEPOSIT)) {
-      accountService.withdraw(transaction.getCbu(), transaction.getSum());
+      accountService.rollbackDeposit(transaction.getCbu(), transaction.getSum());
     } else if (transaction.getType().equals(WITHDRAW)) {
-      accountService.deposit(transaction.getCbu(), transaction.getSum());
+      accountService.rollbackWithdraw(transaction.getCbu(), transaction.getSum());
     }
   }
 }
